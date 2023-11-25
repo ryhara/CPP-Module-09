@@ -4,11 +4,11 @@ int main(int argc, char **argv)
 {
 	if (argc != 2)
 	{
-		std::cerr << "Error" << std::endl << "Usage: ./bitcoin [file_path]" << std::endl;
+		std::cerr << RED << "Error: could not open file." << END << std::endl;
 		return (1);
 	}
 	BitcoinExchange exchange;
-	exchange.setAmount(std::stod(argv[1]));
-	exchange.display();
+	exchange.readData("./data.csv");
+	exchange.startTransaction(argv[1]);
 	return (0);
 }
