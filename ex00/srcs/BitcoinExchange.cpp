@@ -34,18 +34,46 @@ void BitcoinExchange::readData(std::string const &file)
 	}
 	else
 	{
-		getline(ifs, line);
-		while (getline(ifs, line))
+		if (!getline(ifs, line) || line.compare("date,exchange_rate"))
 		{
-			std::stringstream ss(line);
-			std::string date, rate;
-			double rate_value;
-			getline(ss, date, ',');
-			ss >> rate_value;
-			_data[date] =  rate_value;
+			std::cerr << RED << "Error: " << "DB file must start with \"date,exchange_rate\" ." << END << std::endl;
+			std::exit(1);
+		}
+		try {
+			while (getline(ifs, line))
+			{
+				if (line.empty())
+					continue ;
+				std::stringstream ss(line);
+				std::string date, rate;
+				double rate_value;
+				if (!getline(ss, date, ','))
+					throw std::runtime_error("Invalid format in DB file.");
+				checkDateInDB(date);
+				ss >> rate_value;
+				if (ss.fail() || !ss.eof())
+					throw std::runtime_error("Invalid format in DB file.");
+				_data[date] =  rate_value;
+			}
+		} catch (std::exception &e) {
+			std::cerr << RED << "Error: " << e.what() << END << std::endl;
+			ifs.close();
+			std::exit(1);
 		}
 		ifs.close();
 	}
+}
+
+void BitcoinExchange::checkDateInDB(std::string const &date)
+{
+	std::string new_date;
+	new_date = date;
+	new_date.erase(std::remove(new_date.begin(), new_date.end(), ' '), new_date.end());
+	if (!checkDateFormat(new_date))
+		throw std::runtime_error("bad input in DB file => " + date);
+	if (!checkDateRange(new_date))
+		throw std::runtime_error("bad input in DB file => " + date);
+	return ;
 }
 
 void BitcoinExchange::startTransaction(std::string const &file)

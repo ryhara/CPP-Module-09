@@ -40,6 +40,7 @@ class BitcoinExchange
 		void checkLine(std::string const &line);
 		bool checkFirstLine(std::string line);
 		void checkDate(std::string const &date);
+		void checkDateInDB(std::string const &date);
 		bool checkDateFormat(std::string const &date);
 		bool checkDateRange(std::string const &date);
 		void splitDate(std::string const &date, Date &d);
