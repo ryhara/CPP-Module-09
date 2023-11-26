@@ -91,6 +91,9 @@ void BitcoinExchange::startTransaction(std::string const &file)
 		{
 			if (!checkFirstLine(line))
 				std::exit(1);
+		} else {
+			std::cerr << RED << "Error: " << "Input file first line is empty." << END << std::endl;
+			std::exit(1);
 		}
 		while (getline(ifs, line)) {
 			if (line.empty())
