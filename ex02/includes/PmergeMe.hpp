@@ -39,12 +39,14 @@ class PmergeMe
 		void mergeInsertionSort();
 		void mergeInsertionSortVector();
 		void mergeInsertionSortList();
-		void sortPairsVector(std::vector< std::pair<int, int> > &pairs);
-		void sortPairsList(std::list< std::pair<int, int> > &pairs);
 		std::vector<std::pair<int, int> >  makePairsVector();
 		std::list<std::pair<int, int> >  makePairsList();
+		void sortPairsVector(std::vector< std::pair<int, int> > &pairs);
+		void sortPairsList(std::list< std::pair<int, int> > &pairs);
 		void InsertionSortVector(std::vector<std::pair<int, int> > &pairs);
 		void InsertionSortList(std::list<std::pair<int, int> > &pairs);
+		int binarySearchInsertionPointVector(std::vector<int> &sorted, int value);
+		int binarySearchInsertionPointList(std::list<int> &sorted, int value);
 	public:
 		PmergeMe();
 		~PmergeMe();

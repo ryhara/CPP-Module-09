@@ -28,21 +28,25 @@ fclean : clean
 
 re : fclean all
 
-test :
-	./$(NAME) 0
-	./$(NAME) 0.0
-	./$(NAME) 0.0f
-	./$(NAME) nan
-	./$(NAME) nanf
-	./$(NAME) +inf
-	./$(NAME) -inf
-	./$(NAME) +inff
-	./$(NAME) -inff
-	./$(NAME) 42
-	./$(NAME) -42
-	./$(NAME) 42.0
-	./$(NAME) -42.0
-	./$(NAME) 42.0f
-	./$(NAME) -42.0f
+debug : CXXFLAGS += -D DEBUG
+debug : re
 
-.PHONY : all clean fclean re test
+test :
+	@ echo "-- ./$(NAME) --"
+	@-./$(NAME)
+
+	@ echo "\n-- ./$(NAME) 1 --"
+	@-./$(NAME) 1
+	@echo "\n-- ./$(NAME) 1 2 3 4 5 --"
+	@-./$(NAME) 1 2 3 4 5
+	@ echo "\n-- ./$(NAME) 2 -1 --"
+	@-./$(NAME) 2 -1
+	@ echo "\n-- ./$(NAME) 3 5 9 7 4 --"
+	@-./$(NAME) 3 5 9 7 4
+	@ echo "\n-- ./$(NAME) `jot -r 100 1 100000 | tr '\n' ' '` --"
+	@-./$(NAME) `jot -r 100 1 100000 | tr '\n' ' '`
+	@ echo "\n-- ./$(NAME) `jot -r 3000 1 100000 | tr '\n' ' '` --"
+	@-./$(NAME) `jot -r 3000 1 100000 | tr '\n' ' '`
+
+
+.PHONY : all clean fclean re debug test
