@@ -19,6 +19,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <utility>
 #include <sstream>
 #include <ctime>
 
@@ -34,9 +35,16 @@ class PmergeMe
 		void printTime(void);
 		bool isSorted(std::string const &mode);
 		void checkInput(char **argv); // throw
+
 		void mergeInsertionSort();
 		void mergeInsertionSortVector();
 		void mergeInsertionSortList();
+		void sortPairsVector(std::vector< std::pair<int, int> > &pairs);
+		void sortPairsList(std::list< std::pair<int, int> > &pairs);
+		std::vector<std::pair<int, int> >  makePairsVector();
+		std::list<std::pair<int, int> >  makePairsList();
+		void InsertionSortVector(std::vector<std::pair<int, int> > &pairs);
+		void InsertionSortList(std::list<std::pair<int, int> > &pairs);
 	public:
 		PmergeMe();
 		~PmergeMe();
@@ -45,5 +53,9 @@ class PmergeMe
 
 		void executeMergeInsertionSort(char **argv);
 };
+
+std::ostream &operator<<(std::ostream &out, std::vector<int> &v);
+std::ostream &operator<<(std::ostream &out, std::list<int> &l);
+
 
 #endif
