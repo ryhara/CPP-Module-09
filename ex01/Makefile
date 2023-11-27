@@ -28,21 +28,4 @@ fclean : clean
 
 re : fclean all
 
-test :
-	./$(NAME) 0
-	./$(NAME) 0.0
-	./$(NAME) 0.0f
-	./$(NAME) nan
-	./$(NAME) nanf
-	./$(NAME) +inf
-	./$(NAME) -inf
-	./$(NAME) +inff
-	./$(NAME) -inff
-	./$(NAME) 42
-	./$(NAME) -42
-	./$(NAME) 42.0
-	./$(NAME) -42.0
-	./$(NAME) 42.0f
-	./$(NAME) -42.0f
-
-.PHONY : all clean fclean re test
+.PHONY : all clean fclean re
