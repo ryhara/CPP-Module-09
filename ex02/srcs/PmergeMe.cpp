@@ -66,11 +66,18 @@ void PmergeMe::mergeInsertionSortVector()
 {
 	clock_t start = clock();
 	std::vector<std::pair<int, int> >  pairs = makePairsVector();
-	sortPairsVector(pairs);
+	std::pair<int, int> tmp;
+	if (_vector.size() % 2 != 0) {
+		tmp = pairs.back();
+		pairs.pop_back();
+	}
+	sortPairsVector(pairs, 0, pairs.size() - 1);
+	if (_vector.size() % 2 != 0)
+		pairs.push_back(tmp);
 	InsertionSortVector(pairs);
 	#if DEBUG
 		if (!isSorted("vector"))
-			throw std::runtime_error("Not sorted.");
+			throw std::runtime_error("Not sorted in vector.");
 	#endif
 	clock_t end = clock();
 	_vector_time = (double)(end - start) / CLOCKS_PER_SEC * 1000000.0;
@@ -80,11 +87,18 @@ void PmergeMe::mergeInsertionSortList()
 {
 	clock_t start = clock();
 	std::list<std::pair<int, int> > pairs = makePairsList();
-	sortPairsList(pairs);
+	std::pair<int, int> tmp;
+	if (_list.size() % 2 != 0) {
+		tmp = pairs.back();
+		pairs.pop_back();
+	}
+	sortPairsList(pairs, 0, pairs.size() - 1);
+	if (_list.size() % 2 != 0)
+		pairs.push_back(tmp);
 	InsertionSortList(pairs);
 	#if DEBUG
 		if (!isSorted("list"))
-			throw std::runtime_error("Not sorted.");
+			throw std::runtime_error("Not sorted in list.");
 	#endif
 	clock_t end = clock();
 	_list_time = (double)(end - start) / CLOCKS_PER_SEC * 1000000.0;
@@ -93,40 +107,40 @@ void PmergeMe::mergeInsertionSortList()
 std::vector<std::pair<int, int> > PmergeMe::makePairsVector()
 {
 	std::vector<std::pair<int, int> > pairs;
-	std::vector<int> sorted, tmp;
+	std::vector<int> sorted;
+	size_t vector_size = _vector.size();
 
-	for (std::vector<int>::iterator it = _vector.begin(); it != _vector.end(); it++)
-	{
+	if (vector_size % 2 != 0)
+		vector_size--;
+	for (size_t i = 0; i < vector_size; i += 2) {
 		std::pair<int, int> pair;
-		std::vector<int>::iterator prev_it = it++;
-		if (it == _vector.end()) {
-			pairs.push_back(std::make_pair(*prev_it, -1));
-			break;
-		}
-		if (*prev_it > *it) {
-			pair.first = *it;
-			pair.second = *prev_it;
+		if (_vector[i] > _vector[i + 1]) {
+			pair.first = _vector[i + 1];
+			pair.second = _vector[i];
 		} else {
-			pair.first = *prev_it;
-			pair.second = *it;
+			pair.first = _vector[i];
+			pair.second = _vector[i + 1];
 		}
 		pairs.push_back(pair);
 	}
+	if (_vector.size() % 2 != 0)
+		pairs.push_back(std::make_pair(-1, _vector.back()));
 	return (pairs);
 }
 
 std::list<std::pair<int, int> >  PmergeMe::makePairsList()
 {
 	std::list<std::pair<int, int> > pairs;
-	std::list<int> sorted, tmp;
-	for (std::list<int>::iterator it = _list.begin(); it != _list.end(); it++)
+	std::list<int> sorted;
+	std::list<int>::iterator it, prev_it, end;
+
+	end = _list.end();
+	if (_list.size() % 2 != 0)
+		end--;
+	for (std::list<int>::iterator it = _list.begin(); it != end; it++)
 	{
 		std::pair<int, int> pair;
 		std::list<int>::iterator prev_it = it++;
-		if (it == _list.end()) {
-			pairs.push_back(std::make_pair(*prev_it, -1));
-			break;
-		}
 		if (*prev_it > *it) {
 			pair.first = *it;
 			pair.second = *prev_it;
@@ -136,28 +150,27 @@ std::list<std::pair<int, int> >  PmergeMe::makePairsList()
 		}
 		pairs.push_back(pair);
 	}
+	if (_list.size() % 2 != 0)
+		pairs.push_back(std::make_pair(-1, _list.back()));
 	return (pairs);
 }
 
 void PmergeMe::InsertionSortVector(std::vector<std::pair<int, int> > &pairs)
 {
 	std::vector<int> sorted, tmp;
+	if (_vector.size() % 2 != 0) {
+		tmp.push_back(pairs.back().second);
+		pairs.pop_back();
+	}
 	for (std::vector<std::pair<int, int> >::iterator it = pairs.begin(); it != pairs.end(); it++) {
-		if (it->second == -1) {
-			tmp.insert(tmp.begin(), it->first);
-			continue;
-		}
 		sorted.push_back(it->first);
 		tmp.push_back(it->second);
 	}
+	// jacob way
 	for (std::vector<int>::reverse_iterator it = tmp.rbegin(); it != tmp.rend(); it++) {
 		int pos = binarySearchInsertionPointVector(sorted, *it);
 		sorted.insert(sorted.begin() + pos, *it);
 	}
-	#if DEBUG
-		if (sorted.size() != _vector.size())
-			throw std::runtime_error("Not sorted.");
-	#endif
 	_vector.clear();
 	_vector = sorted;
 }
@@ -165,14 +178,15 @@ void PmergeMe::InsertionSortVector(std::vector<std::pair<int, int> > &pairs)
 void PmergeMe::InsertionSortList(std::list<std::pair<int, int> > &pairs)
 {
 	std::list<int> sorted, tmp;
+	if (_list.size() % 2 != 0) {
+		tmp.push_back(pairs.back().second);
+		pairs.pop_back();
+	}
 	for (std::list<std::pair<int, int> >::iterator it = pairs.begin(); it != pairs.end(); it++) {
-		if (it->second == -1) {
-			tmp.insert(tmp.begin(), it->first);
-			continue;
-		}
 		sorted.push_back(it->first);
 		tmp.push_back(it->second);
 	}
+	// jacob way
 	for (std::list<int>::reverse_iterator it = tmp.rbegin(); it != tmp.rend(); it++) {
 		int pos = binarySearchInsertionPointList(sorted, *it);
 		std::list<int>::iterator i = sorted.begin();
@@ -217,19 +231,80 @@ int PmergeMe::binarySearchInsertionPointList(std::list<int>& arr, int value) {
 	return low;
 }
 
-bool comparePair(std::pair<int, int> a, std::pair<int, int> b)
+void PmergeMe::sortPairsVector(std::vector<std::pair<int, int> > &pairs, int left, int right)
 {
-	return (a.first < b.first);
+	if (left < right)
+	{
+		int mid = left + (right - left) / 2;
+		sortPairsVector(pairs, left, mid);
+		sortPairsVector(pairs, mid + 1, right);
+		mergeVector(pairs, left, mid, right);
+	}
 }
 
-void PmergeMe::sortPairsVector(std::vector<std::pair<int, int> > &pairs)
+
+void PmergeMe::sortPairsList(std::list<std::pair<int, int> > &pairs, int left, int right)
 {
-	std::sort(pairs.begin(), pairs.end(), comparePair);
+	if (left < right)
+	{
+		int mid = left + (right - left) / 2;
+		sortPairsList(pairs, left, mid);
+		sortPairsList(pairs, mid + 1, right);
+		mergeList(pairs, left, mid, right);
+	}
 }
 
-void PmergeMe::sortPairsList(std::list<std::pair<int, int> > &pairs)
+void PmergeMe::mergeList(std::list<std::pair<int, int > > &pairs, int left, int mid, int right)
 {
-	pairs.sort(comparePair);
+	int n1 = mid - left + 1;
+	int n2 = right - mid;
+	std::list<std::pair<int, int> > L, R;
+	std::list<std::pair<int, int> >::iterator it = pairs.begin(); std::advance(it, left);
+	for (int i = 0; i < n1; i++)
+		L.push_back(*it++);
+	for (int j = 0; j < n2; j++)
+		R.push_back(*it++);
+	std::list<std::pair<int, int> >::iterator itL, itR;
+	itL = L.begin();
+	itR = R.begin();
+	it = pairs.begin(); std::advance(it, left);
+	while (itL != L.end() && itR != R.end())
+	{
+		if (itL->first <= itR->first)
+			*it++ = *itL++;
+		else
+			*it++ = *itR++;
+	}
+	while (itL != L.end())
+		*it++ = *itL++;
+	while (itR != R.end())
+		*it++ = *itR++;
+}
+
+void PmergeMe::mergeVector(std::vector<std::pair<int, int> > &pairs, int left, int mid, int right)
+{
+	int i, j, k;
+	int n1 = mid - left + 1;
+	int n2 = right - mid;
+	std::vector<std::pair<int, int> > L, R;
+	for (i = 0; i < n1; i++)
+		L.push_back(pairs[left + i]);
+	for (j = 0; j < n2; j++)
+		R.push_back(pairs[mid + 1 + j]);
+	i = 0;
+	j = 0;
+	k = left;
+	while (i < n1 && j < n2)
+	{
+		if (L[i].first <= R[j].first)
+			pairs[k++] = L[i++];
+		else
+			pairs[k++] = R[j++];
+	}
+	while (i < n1)
+		pairs[k++] = L[i++];
+	while (j < n2)
+		pairs[k++] = R[j++];
 }
 
 void PmergeMe::printVector(std::string const &mode)
@@ -284,3 +359,20 @@ std::ostream &operator<<(std::ostream &out, std::list<int> &l)
 	return (out);
 }
 
+std::ostream &operator<<(std::ostream &out, std::vector<std::pair<int, int> > &v)
+{
+	out << "vector<std::pair<int, int> >: " << std::endl;
+	for (std::vector<std::pair<int, int> >::iterator it = v.begin(); it != v.end(); it++)
+		out << "(" << it->first << ", " << it->second << ") " << std::endl;
+	out << std::endl;
+	return (out);
+}
+
+std::ostream &operator<<(std::ostream &out, std::list<std::pair<int, int> > &l)
+{
+	out << "list<std::pair<int,int > >:" << std::endl;
+	for (std::list<std::pair<int, int> >::iterator it = l.begin(); it != l.end(); it++)
+		out << "(" << it->first << ", " << it->second << ") " << std::endl;
+	out << std::endl;
+	return (out);
+}

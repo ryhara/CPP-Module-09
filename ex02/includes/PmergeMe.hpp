@@ -41,8 +41,11 @@ class PmergeMe
 		void mergeInsertionSortList();
 		std::vector<std::pair<int, int> >  makePairsVector();
 		std::list<std::pair<int, int> >  makePairsList();
-		void sortPairsVector(std::vector< std::pair<int, int> > &pairs);
+		void sortPairsVector(std::vector< std::pair<int, int> > &pairs, int left, int right);
+		void sortPairsList(std::list< std::pair<int, int> > &pairs, int left, int right);
 		void sortPairsList(std::list< std::pair<int, int> > &pairs);
+		void mergeVector(std::vector< std::pair<int, int> > &pairs, int left, int middle, int right);
+		void mergeList(std::list< std::pair<int, int> > &pairs, int left, int middle, int right);
 		void InsertionSortVector(std::vector<std::pair<int, int> > &pairs);
 		void InsertionSortList(std::list<std::pair<int, int> > &pairs);
 		int binarySearchInsertionPointVector(std::vector<int> &sorted, int value);
@@ -58,6 +61,8 @@ class PmergeMe
 
 std::ostream &operator<<(std::ostream &out, std::vector<int> &v);
 std::ostream &operator<<(std::ostream &out, std::list<int> &l);
+std::ostream &operator<<(std::ostream &out, std::vector<std::pair<int, int> > &v);
+std::ostream &operator<<(std::ostream &out, std::list<std::pair<int, int> > &l);
 
 
 #endif
