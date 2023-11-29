@@ -50,6 +50,10 @@ class PmergeMe
 		void InsertionSortList(std::list<std::pair<int, int> > &pairs);
 		int binarySearchInsertionPointVector(std::vector<int> &sorted, int value);
 		int binarySearchInsertionPointList(std::list<int> &sorted, int value);
+
+		int jacobsthal(int n);
+		std::vector<int> jacobsthalInsertionSequence(int n);
+
 	public:
 		PmergeMe();
 		~PmergeMe();
