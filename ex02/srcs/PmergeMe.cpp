@@ -28,6 +28,7 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &copy)
 
 void PmergeMe::executeMergeInsertionSort(char **argv)
 {
+
 	checkInput(argv);
 	printVector("Before: ");
 	mergeInsertionSort();
@@ -166,7 +167,7 @@ void PmergeMe::InsertionSortVector(std::vector<std::pair<int, int> > &pairs)
 		sorted.push_back(it->first);
 		tmp.push_back(it->second);
 	}
-	std::vector<int> jacobs = jacobsthalInsertionSequence(sorted.size());
+	std::vector<int> jacobs = jacobsthalInsertionSequence(tmp.size());
 	for (std::vector<int>::iterator it = jacobs.begin(); it != jacobs.end(); it++) {
 		int pos = binarySearchInsertionPointVector(sorted, tmp[tmp.size() - 1 - *it]);
 		sorted.insert(sorted.begin() + pos, tmp[tmp.size() - 1 - *it]);
@@ -186,7 +187,7 @@ void PmergeMe::InsertionSortList(std::list<std::pair<int, int> > &pairs)
 		sorted.push_back(it->first);
 		tmp.push_back(it->second);
 	}
-	std::vector<int> jacobs = jacobsthalInsertionSequence(sorted.size());
+	std::vector<int> jacobs = jacobsthalInsertionSequence(tmp.size());
 	for (std::vector<int>::iterator it = jacobs.begin(); it != jacobs.end(); it++) {
 		std::list<int>::iterator tmp_it = tmp.end();
 		std::advance(tmp_it, -1 - *it);
@@ -317,23 +318,16 @@ int PmergeMe::jacobsthal(int n)
 std::vector<int> PmergeMe::jacobsthalInsertionSequence(int n)
 {
 	std::vector<int> indexes, sequence;
-    int i = 2;
-    while (jacobsthal(i) < n)
-        indexes.push_back(jacobsthal(i++));
-    indexes.push_back(n);
-	for (size_t i = 0; i < indexes.size(); i++)
-		std::cout << indexes[i] << " ";
-	std::cout << std::endl;
+	int i = 2;
+	while (jacobsthal(i) < n)
+		indexes.push_back(jacobsthal(i++));
+	indexes.push_back(n);
 	sequence.push_back(0);
-    for (size_t i = 1; i < indexes.size(); i++) {
-        for (int j = indexes[i]; j > indexes[i - 1]; j--) {
-            sequence.push_back(j - 1);
-        }
-    }
-	for (size_t i = 0; i < sequence.size(); i++)
-		std::cout << sequence[i] << " ";
-	std::cout << std::endl;
-    return sequence;
+	for (size_t i = 1; i < indexes.size(); i++) {
+		for (int j = indexes[i]; j > indexes[i - 1]; j--)
+			sequence.push_back(j - 1);
+	}
+	return sequence;
 }
 
 void PmergeMe::printVector(std::string const &mode)
