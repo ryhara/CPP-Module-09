@@ -43,9 +43,9 @@ test :
 	@-./$(NAME) 2 -1
 	@ echo "\n-- ./$(NAME) 3 5 9 7 4 --"
 	@-./$(NAME) 3 5 9 7 4
-	@ echo "\n-- ./$(NAME) jot -r 100 1 100000 | tr '\\n' ' ' --"
+	@ echo "\n-- ./$(NAME) jot -r 100 1 100000 | tr '\\ n' ' ' --"
 	@-./$(NAME) `jot -r 100 1 100000 | tr '\n' ' '`
-	@ echo "\n-- ./$(NAME) jot -r 3000 1 100000 | tr '\\n' ' ' --"
+	@ echo "\n-- ./$(NAME) jot -r 3000 1 100000 | tr '\\ n' ' ' --"
 	@-./$(NAME) `jot -r 3001 1 100000 | tr '\n' ' '`
 
 
