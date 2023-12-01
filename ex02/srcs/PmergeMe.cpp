@@ -28,7 +28,6 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &copy)
 
 void PmergeMe::executeMergeInsertionSort(char **argv)
 {
-
 	checkInput(argv);
 	printVector("Before: ");
 	mergeInsertionSort();
@@ -158,19 +157,25 @@ std::list<std::pair<int, int> >  PmergeMe::makePairsList()
 
 void PmergeMe::InsertionSortVector(std::vector<std::pair<int, int> > &pairs)
 {
-	std::vector<int> sorted, tmp;
+	std::vector<int> sorted;
+	int last_one;
 	if (_vector.size() % 2 != 0) {
-		tmp.push_back(pairs.back().second);
+		last_one = pairs.back().second;
 		pairs.pop_back();
 	}
 	for (std::vector<std::pair<int, int> >::iterator it = pairs.begin(); it != pairs.end(); it++) {
 		sorted.push_back(it->first);
-		tmp.push_back(it->second);
 	}
-	std::vector<int> jacobs = jacobsthalInsertionSequence(tmp.size());
+	std::vector<int> jacobs = jacobsthalInsertionSequence(pairs.size());
+	std::vector<int>::iterator pos, start;
 	for (std::vector<int>::iterator it = jacobs.begin(); it != jacobs.end(); it++) {
-		int pos = binarySearchInsertionPointVector(sorted, tmp[tmp.size() - 1 - *it]);
-		sorted.insert(sorted.begin() + pos, tmp[tmp.size() - 1 - *it]);
+		start = sorted.begin() + pairs.size() - 1 - *it;
+		pos = std::lower_bound(start, sorted.end(), pairs[pairs.size() - 1 - *it].second);
+		sorted.insert(pos, pairs[pairs.size() - 1 - *it].second);
+	}
+	if (_vector.size() % 2 != 0) {
+		pos = std::lower_bound(sorted.begin(), sorted.end(), last_one);
+		sorted.insert(pos, last_one);
 	}
 	_vector.clear();
 	_vector = sorted;
@@ -178,30 +183,36 @@ void PmergeMe::InsertionSortVector(std::vector<std::pair<int, int> > &pairs)
 
 void PmergeMe::InsertionSortList(std::list<std::pair<int, int> > &pairs)
 {
-	std::list<int> sorted, tmp;
+	std::list<int> sorted;
+	int last_one;
 	if (_list.size() % 2 != 0) {
-		tmp.push_back(pairs.back().second);
+		last_one = pairs.back().second;
 		pairs.pop_back();
 	}
 	for (std::list<std::pair<int, int> >::iterator it = pairs.begin(); it != pairs.end(); it++) {
 		sorted.push_back(it->first);
-		tmp.push_back(it->second);
 	}
-	std::vector<int> jacobs = jacobsthalInsertionSequence(tmp.size());
+	std::vector<int> jacobs = jacobsthalInsertionSequence(pairs.size());
+	std::list<int>::iterator pos, start;
+	std::list<std::pair<int, int> >::iterator tmp_it;;
 	for (std::vector<int>::iterator it = jacobs.begin(); it != jacobs.end(); it++) {
-		std::list<int>::iterator tmp_it = tmp.end();
+		tmp_it = pairs.end();
 		std::advance(tmp_it, -1 - *it);
-		int pos = binarySearchInsertionPointList(sorted, *tmp_it);
-		std::list<int>::iterator it_sorted = sorted.begin();
-		std::advance(it_sorted, pos);
-		sorted.insert(it_sorted, *tmp_it);
+		start = sorted.begin();
+		std::advance(start, pairs.size() - 1 - *it);
+		pos = std::lower_bound(start, sorted.end(), (*tmp_it).second);
+		sorted.insert(pos, (*tmp_it).second);
+	}
+	if (_list.size() % 2 != 0) {
+		pos = std::lower_bound(sorted.begin(), sorted.end(), last_one);
+		sorted.insert(pos, last_one);
 	}
 	_list.clear();
 	_list = sorted;
 }
 
-int PmergeMe::binarySearchInsertionPointVector(std::vector<int>& arr, int value) {
-	int low = 0;
+int PmergeMe::binarySearchInsertionPointVector(std::vector<int>& arr, int start, int value) {
+	int low = start;
 	int high = arr.size() - 1;
 	while (low <= high) {
 		int mid = low + (high - low) / 2;
@@ -214,8 +225,8 @@ int PmergeMe::binarySearchInsertionPointVector(std::vector<int>& arr, int value)
 	return low;
 }
 
-int PmergeMe::binarySearchInsertionPointList(std::list<int>& arr, int value) {
-	int low = 0;
+int PmergeMe::binarySearchInsertionPointList(std::list<int>& arr, int start, int value) {
+	int low = start;
 	int high = arr.size() - 1;
 	while (low <= high) {
 		int mid = low + (high - low) / 2;
